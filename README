@@ -34,4 +34,4 @@ written in 'sim_four_species_chromosome.population'
 'plot_ancestral_mutation.py' generates the boxplots shown in Figure 7.
 
 Using these files, one should be able to replicate the analyses described in the paper. Running these files
-requres the installation of SLiM, tkits, pyslim, SciPy, NumPy, matplotlib
+requires the installation of SLiM, tkits, pyslim, SciPy, NumPy, Matplotlib
