@@ -1,0 +1,64 @@
+initialize()
+{
+    initializeTreeSeq();
+    initializeMutationRate(1.5e-5);
+    initializeMutationType("m2", 0.5, "f", sel);
+    m2.convertToSubstitution = F;
+
+    initializeMutationType("m3", 0.5, "f", 0.0);
+    m3.convertToSubstitution = F;
+    initializeGenomicElementType("g1", m3, 1.0);
+    initializeGenomicElement(g1, 0, 0);
+    initializeRecombinationRate(0);
+}
+
+1 early()
+{
+    sim.addSubpop("p1", 200);
+    
+    target = p1.genomes[0];
+    target.addNewDrawnMutation(m2, 0);
+    defineConstant("MUT", target.mutations);
+
+    target.removeMutations();
+}
+
+mutation(m3) {
+    if (genome.containsMarkerMutation(m2, mut.position))
+        return T;
+    return MUT[mut.position];
+}
+
+late() {
+
+    m3muts = sim.mutationsOfType(m3);
+    if (m3muts.length() > 0) {
+        genomes = sim.subpopulations.genomes;
+        counts = genomes.countOfMutationsOfType(m3);
+        hasStacked = genomes[counts > 0];
+        for (genome in hasStacked) {
+            stacked_m3 = genome.mutationsOfType(m3);
+            stackPositions = stacked_m3.position;
+            all_m2 = genome.mutationsOfType(m2);
+            s = (match(all_m2.position, stackPositions) >= 0);
+            stacked_m2 = all_m2[s];
+            genome.removeMutations(c(stacked_m3, stacked_m2));
+        }
+    }
+}
+
+4000 early()
+{
+    sim.addSubpopSplit("p2", 200, p1);
+    p1.setSubpopulationSize(pop_size_1);
+}
+
+4004 early()
+{
+    sim.addSubpopSplit("p3", pop_size_3, p2);
+    p2.setSubpopulationSize(pop_size_2);
+}
+7204 late()
+{
+    sim.treeSeqOutput(O);
+}

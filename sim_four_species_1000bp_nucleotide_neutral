@@ -1,0 +1,32 @@
+initialize()
+{
+    initializeSLiMOptions(nucleotideBased=T);
+    initializeTreeSeq();
+    initializeAncestralNucleotides(randomNucleotides(1000));
+    initializeMutationTypeNuc("m1", 0.5, "f", 0);
+    initializeGenomicElementType("g1", m1, 1, mmJukesCantor(8e-7)); 
+    initializeGenomicElement(g1, 0, 999);
+    initializeRecombinationRate(0);
+}
+1 early()
+{
+    sim.addSubpop("p0", 400);
+}
+8000 early()
+{
+    sim.addSubpopSplit("p1", 400, p0);
+}
+16000 early()
+{
+    sim.addSubpopSplit("p2", 400, p1);
+    p1.setSubpopulationSize(pop_size_1);
+}
+16016 early()
+{
+    sim.addSubpopSplit("p3", pop_size_3, p2);
+    p2.setSubpopulationSize(pop_size_2);
+}
+22416 late()
+{
+    sim.treeSeqOutput(O);
+}
